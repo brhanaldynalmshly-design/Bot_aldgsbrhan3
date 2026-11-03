@@ -1,0 +1,1 @@
+{"version":3,"file":"getBotLogsParams.d.ts","sourceRoot":"","sources":["../../../src/generated/types/getBotLogsParams.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,mBAAmB,CAAC;AAEzD,MAAM,MAAM,gBAAgB,GAAG;IAC/B,KAAK,CAAC,EAAE,eAAe,CAAC;IACxB,MAAM,CAAC,EAAE,MAAM,CAAC;IAChB;;;OAGG;IACH,KAAK,CAAC,EAAE,MAAM,CAAC;CACd,CAAC"}

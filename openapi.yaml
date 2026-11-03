@@ -1,0 +1,311 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /weather-api
+    description: Weather bot API
+tags:
+  - name: health
+    description: Service health
+  - name: dashboard
+    description: Weather bot operations and monitoring
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Check weather service health
+      description: Returns service and Telegram bot status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get dashboard metrics and recent requests
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /requests:
+    get:
+      operationId: getWeatherRequests
+      tags: [dashboard]
+      summary: List recent weather requests
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Recent weather requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WeatherRequest"
+    post:
+      operationId: createWeatherRequest
+      tags: [dashboard]
+      summary: Query weather for coordinates and a date or year
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WeatherRequestInput"
+      responses:
+        "200":
+          description: Weather result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeatherQueryResult"
+        "400":
+          description: Invalid coordinates or date
+        "502":
+          description: Weather provider request failed
+  /logs:
+    get:
+      operationId: getBotLogs
+      tags: [dashboard]
+      summary: List bot and service logs
+      parameters:
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, info, warning, error]
+            default: all
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        "200":
+          description: Recent application logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LogEntry"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+        botStatus:
+          type: string
+        providerConfigured:
+          type: boolean
+      required:
+        - status
+    DashboardSummary:
+      type: object
+      properties:
+        status:
+          type: string
+        botStatus:
+          type: string
+        requestsToday:
+          type: integer
+        requestsTotal:
+          type: integer
+        successfulRequests:
+          type: integer
+        successRate:
+          type: number
+        avgResponseMs:
+          type: integer
+        activeUsers:
+          type: integer
+        requestsTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        recentRequests:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeatherRequest"
+      required:
+        - status
+        - botStatus
+        - requestsToday
+        - requestsTotal
+        - successfulRequests
+        - successRate
+        - avgResponseMs
+        - activeUsers
+        - requestsTrend
+        - recentRequests
+    TrendPoint:
+      type: object
+      properties:
+        label:
+          type: string
+        requests:
+          type: integer
+      required: [label, requests]
+    WeatherRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        requestedDate:
+          type: string
+        requestType:
+          type: string
+          enum: [date, year]
+        status:
+          type: string
+          enum: [success, error]
+        source:
+          type: string
+          enum: [forecast, historical, mixed]
+        temperature:
+          type: ["number", "null"]
+        humidity:
+          type: ["number", "null"]
+        dewPoint:
+          type: ["number", "null"]
+        conditions:
+          type: ["string", "null"]
+        responseMs:
+          type: integer
+        user:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - latitude
+        - longitude
+        - requestedDate
+        - requestType
+        - status
+        - source
+        - temperature
+        - humidity
+        - dewPoint
+        - conditions
+        - responseMs
+        - user
+        - createdAt
+    WeatherRequestInput:
+      type: object
+      properties:
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        dateOrYear:
+          type: string
+          description: ISO date (YYYY-MM-DD) or year (YYYY)
+      required: [latitude, longitude, dateOrYear]
+    WeatherHour:
+      type: object
+      properties:
+        time:
+          type: string
+        temperature:
+          type: ["number", "null"]
+        humidity:
+          type: ["number", "null"]
+        dewPoint:
+          type: ["number", "null"]
+        windSpeed:
+          type: ["number", "null"]
+      required: [time, temperature, humidity, dewPoint, windSpeed]
+    WeatherReading:
+      type: object
+      properties:
+        date:
+          type: string
+        temperature:
+          type: ["number", "null"]
+        minTemperature:
+          type: ["number", "null"]
+        maxTemperature:
+          type: ["number", "null"]
+        humidity:
+          type: ["number", "null"]
+        dewPoint:
+          type: ["number", "null"]
+        conditions:
+          type: ["string", "null"]
+        hours:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeatherHour"
+      required: [date, temperature, minTemperature, maxTemperature, humidity, dewPoint, conditions, hours]
+    WeatherQueryResult:
+      type: object
+      properties:
+        request:
+          $ref: "#/components/schemas/WeatherRequest"
+        readings:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeatherReading"
+        periodNote:
+          type: string
+      required: [request, readings]
+    LogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        level:
+          type: string
+          enum: [info, warning, error]
+        source:
+          type: string
+        message:
+          type: string
+        createdAt:
+          type: string
+      required: [id, level, source, message, createdAt]
+

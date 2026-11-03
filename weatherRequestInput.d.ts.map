@@ -1,0 +1,1 @@
+{"version":3,"file":"weatherRequestInput.d.ts","sourceRoot":"","sources":["../../../src/generated/types/weatherRequestInput.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,mBAAmB;IAClC;;;SAGK;IACL,QAAQ,EAAE,MAAM,CAAC;IACjB;;;SAGK;IACL,SAAS,EAAE,MAAM,CAAC;IAClB,2CAA2C;IAC3C,UAAU,EAAE,MAAM,CAAC;CACpB"}

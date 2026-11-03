@@ -1,0 +1,1 @@
+{"version":3,"file":"weatherQueryResult.d.ts","sourceRoot":"","sources":["../../../src/generated/types/weatherQueryResult.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AACvD,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AAEvD,MAAM,WAAW,kBAAkB;IACjC,OAAO,EAAE,cAAc,CAAC;IACxB,QAAQ,EAAE,cAAc,EAAE,CAAC;IAC3B,UAAU,CAAC,EAAE,MAAM,CAAC;CACrB"}
